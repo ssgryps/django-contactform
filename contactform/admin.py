@@ -39,7 +39,10 @@ class ContactFormSubmissionAdmin(admin.ModelAdmin):
         ContactFormSubmissionAttachmentAdmin,
     ]
     def get_urls(self):
-        from django.conf.urls.defaults import patterns, url
+        try:
+            from django.conf.urls.defaults import patterns, url
+        except:
+            from django.conf.urls import patterns, url
         urlpatterns = patterns('',
             (r'^csv/$', 'contactform.csv_export_views.export'),
         )
