@@ -1,3 +1,4 @@
+import django
 from django.conf import settings
 from django.contrib import admin
 
@@ -39,13 +40,20 @@ class ContactFormSubmissionAdmin(admin.ModelAdmin):
         ContactFormSubmissionAttachmentAdmin,
     ]
     def get_urls(self):
-        try:
-            from django.conf.urls.defaults import patterns, url
-        except:
-            from django.conf.urls import patterns, url
-        urlpatterns = patterns('',
-            (r'^csv/$', 'contactform.csv_export_views.export'),
-        )
+        if django.VERSION < (1, 8):
+            try:
+                from django.conf.urls.defaults import patterns, url
+            except:
+                from django.conf.urls import patterns, url
+            urlpatterns = patterns('',
+                (r'^csv/$', 'contactform.csv_export_views.export'),
+            )
+        else:
+            from django.conf.urls import url
+            from contactform.csv_export_views import export
+            urlpatterns = [
+                url(r'^csv/$', export),
+            ]
         return urlpatterns + super(ContactFormSubmissionAdmin, self).get_urls()
 
 admin.site.register(ContactForm, ContactFormAdmin)
