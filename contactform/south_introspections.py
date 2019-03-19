@@ -1,8 +1,6 @@
-from south.modelsinspector import add_introspection_rules
 from contactform.fields import PickledObjectField
 from django.conf import settings
 from django.db.models.fields import NOT_PROVIDED
-
 
 rules = [
             (
@@ -21,4 +19,12 @@ rules = [
             ),
         ]
 
-add_introspection_rules(rules, ["^contactform\.fields\.PickledObjectField$"])
+
+try:
+    from south.modelsinspector import add_introspection_rules
+    add_introspection_rules(rules, ["^contactform\.fields\.PickledObjectField$"])
+except ImportError:
+    pass
+
+
+
