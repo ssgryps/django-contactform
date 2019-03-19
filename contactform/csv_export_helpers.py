@@ -4,7 +4,11 @@ from django.db.models.fields.related import ManyToManyField
 import re
 import csv
 from csv import Dialect, register_dialect, QUOTE_MINIMAL
-from django.db.models.loading import get_model, get_apps, get_models
+try:
+    from django.db.models.loading import get_model
+except ImportError:
+    from django.apps import apps
+    get_model = apps.get_model
 from django.db.models import BooleanField
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponse

@@ -2,7 +2,11 @@
 from django.utils.encoding import smart_str, smart_unicode
 from django.db.models.fields.related import ManyToManyField
 import re
-from django.db.models.loading import get_model, get_apps, get_models
+try:
+    from django.db.models.loading import get_model
+except ImportError:
+    from django.apps import apps
+    get_model = apps.get_model
 from django.db.models import BooleanField
 from django.contrib.admin.views.decorators import staff_member_required
 from django.http import Http404, HttpResponse
