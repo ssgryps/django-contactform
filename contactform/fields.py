@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
+import django
 from django.db import models
+from django.utils import six
 
 try:
     import cPickle as pickle
@@ -7,11 +9,19 @@ except ImportError:
     import pickle
 
 
-class PickledObjectField(models.Field):
+if django.VERSION < (1, 8):
+    PickledObjectFieldBase = six.with_metaclass(models.SubfieldBase, models.Field)
+else:
+    PickledObjectFieldBase = models.Field
+
+
+class PickledObjectField(PickledObjectFieldBase):
     """
     this version of pickled object does not work for pickling a single string. it must be some object, dict, list...
     """
-    __metaclass__ = models.SubfieldBase
+
+    def from_db_value(self, value, expression, connection, context):
+        return self.to_python(value)
 
     def to_python(self, value):
         if value is None:
