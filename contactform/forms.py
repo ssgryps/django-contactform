@@ -1,13 +1,11 @@
 from django.conf import settings
-from django.core.files.uploadedfile import UploadedFile
-from django.forms import Form, ValidationError, BooleanField, EmailField
-from django.template.defaultfilters import yesno, slugify
-from django.utils.translation import ugettext_lazy as _
 from django.contrib.sites.models import Site
-from django.core.mail import EmailMultiAlternatives as EmailMessage
-from django.core.mail import get_connection
-from django.template.context import Context
+from django.core.files.uploadedfile import UploadedFile
+from django.core.mail import EmailMultiAlternatives as EmailMessage, get_connection
+from django.forms import BooleanField, EmailField, Form, ValidationError
+from django.template.defaultfilters import slugify, yesno
 from django.template.loader import render_to_string
+from django.utils.translation import ugettext_lazy as _
 
 try:
     from captcha.fields import CaptchaField
@@ -65,19 +63,19 @@ class ContactFormFormBase(Form):
             if not isinstance(field, CaptchaField):
 
                 if isinstance(value, bool):
-                    value = yesno(value, u"%s,%s" % (_('yes'), _('no')),)
+                    value = yesno(value, "%s,%s" % (_('yes'), _('no')),)
                 elif isinstance(value, UploadedFile):
                     value = value.name
 
                 if for_display:
-                    field_mapping[name] = {'label': unicode(label), 'value': unicode(value)}
+                    field_mapping[name] = {'label': str(label), 'value': str(value)}
                 else:
                     try:
                         position = int(name.split("_")[-1])
                     except:
                         position = 0
                     label = "%03d_%s" % (position, label)
-                    field_mapping[label] = unicode(value)
+                    field_mapping[label] = str(value)
         return field_mapping
 
     def render_values_as_string(self):
@@ -88,12 +86,12 @@ class ContactFormFormBase(Form):
         if not self.is_valid():
             return
         fields = self.render_values(show_hidden=False, for_display=True)
-        values = (u'%s:%s' % (attrs['label'], attrs['value']) for attrs in fields.itervalues())
+        values = ('%s:%s' % (attrs['label'], attrs['value']) for attrs in list(fields.values()))
         return ''.join(values)
 
     def get_files_from_request(self, request):
         files = []
-        for field_label in self.base_fields.keys():
+        for field_label in list(self.base_fields.keys()):
             if request and field_label in request.FILES:
                 this_file = request.FILES[field_label]
                 if this_file.size <= MAX_FILE_SIZE: # check if file is bigger than 10 MB (which is not good)
@@ -133,7 +131,7 @@ class ContactFormFormBase(Form):
         for uploaded_file in files:
             submission_attachment = ContactFormSubmissionAttachment(submission=submission)
             submission_attachment.save()
-            attachment_name = u"%u_%u-%s" % (submission.form.id, submission.id, uploaded_file.name)
+            attachment_name = "%u_%u-%s" % (submission.form.id, submission.id, uploaded_file.name)
             submission_attachment.file.save(
                 name=attachment_name,
                 content=uploaded_file
@@ -165,19 +163,19 @@ class ContactFormFormBase(Form):
             contact = SiteSettings.objects.get_current()
         except:
             contact = None
-        subject = u"[%s - %s] %s" % (site.domain, contact_form.name, _(u"Contact form sent"))
+        subject = "[%s - %s] %s" % (site.domain, contact_form.name, _("Contact form sent"))
         # prepare email
-        message_context = Context({
+        message_context = {
             'site': site,
             'contact_form': contact_form,
             'rows': self.render_values_as_string(),
             'sender_ip': submission.sender_ip,
             'form_url': submission.form_url,
             'cleaned_fields': self.render_values(show_hidden=False, for_display=True)
-        }, autoescape=False)
+        }
 
-        text_content = render_to_string('contactform/form_submission_email.txt', context_instance=message_context)
-        html_content = render_to_string('contactform/form_submission_email.html', context_instance=message_context)
+        text_content = render_to_string('contactform/form_submission_email.txt', context=message_context)
+        html_content = render_to_string('contactform/form_submission_email.html', context=message_context)
 
         recipient_list = [recipient['email'] for recipient in contact_form.recipients.values('email')]
         bcc = []

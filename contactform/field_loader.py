@@ -55,7 +55,7 @@ def load_class(klass_string):
     module, attr = klass_string.rsplit('.', 1)
     try:
         mod = import_module(module)
-    except ImportError, e:
+    except ImportError as e:
         raise ImproperlyConfigured('Error importing contactform field type module %s: "%s"' % (module, e))
     try:
         klass = getattr(mod, attr)

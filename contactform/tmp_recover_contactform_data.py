@@ -14,11 +14,11 @@ def doit():
     for sub in subs:
         if sub.form_data_pickle in (None, {}, ''):
             to_pickle = {}
-            manipulated = unicode(sub.form_data).replace('\r\n', '------xxxxx-----')
+            manipulated = str(sub.form_data).replace('\r\n', '------xxxxx-----')
             r = re.findall(r"\n([^:\n\r]+): (.+)\n", manipulated, re.MULTILINE)
             for key, value in r:
                 if not key.lower() in ['formularname', 'form url']:
-                    to_pickle[unicode(slugify(key))] = unicode(value).replace('------xxxxx-----', '\r\n')
+                    to_pickle[str(slugify(key))] = str(value).replace('------xxxxx-----', '\r\n')
             sub.form_data_pickle = to_pickle
             sub.save()
 doit()

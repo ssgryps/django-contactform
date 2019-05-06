@@ -37,7 +37,7 @@ class ContactFormNode(template.Node):
                     contact = SiteSettings.objects.get_current()
                 except:
                     contact = None
-                subject = _(u"[%s] Contact form sent") % (site.domain)
+                subject = _("[%s] Contact form sent") % (site.domain)
                 # render fields
                 rows = ''
                 files = []
@@ -45,13 +45,13 @@ class ContactFormNode(template.Node):
                     field_label = slugify(field.get_label())
                     value = form.cleaned_data[field_label]
                     if isinstance(value, bool):
-                        value = yesno(value, u"%s,%s" % (_('yes'), _('no')),)
+                        value = yesno(value, "%s,%s" % (_('yes'), _('no')),)
                     if field.field_type == 'FileField':
                         if field_label in request.FILES:
                             this_file = request.FILES[field_label]
                             if this_file.size > 10240: # check if file is bigger than 10 MB (which is not good)
                                 files.append(this_file)
-                    rows += u"%s: %s\n" % (form.fields[field_label].label, value)
+                    rows += "%s: %s\n" % (form.fields[field_label].label, value)
                 message_context = Context({
                     'site': site,
                     'form': form,
@@ -88,5 +88,5 @@ def render_contactform(parser, token):
         # split_contents() knows not to split quoted strings.
         tag_name, page = token.split_contents()
     except ValueError:
-        raise template.TemplateSyntaxError, "%r tag requires a single argument" % token.contents.split()[0]
+        raise template.TemplateSyntaxError("%r tag requires a single argument" % token.contents.split()[0])
     return ContactFormNode(page)

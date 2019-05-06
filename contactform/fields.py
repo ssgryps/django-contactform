@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import base64
+
 import django
 from django.db import models
 from django.utils import six
@@ -26,15 +28,18 @@ class PickledObjectField(PickledObjectFieldBase):
     def to_python(self, value):
         if value is None:
             return value
-        if isinstance(value, basestring) and not value in ('', u''):
+
+        if isinstance(value, str) and value is not '':
             # If the value is a sting and an error is raised in de-pickling
             # it should be allowed to propogate.
-            return pickle.loads( str(value).decode('base64') )
+            value = value.encode()  # encode str to bytes
+            value = base64.b64decode(value)
+            return pickle.loads(value)
         # its already whatever was pickled
         return value
 
     def get_prep_value(self, value):
-        return pickle.dumps(value).encode('base64')
+        return base64.b64encode(pickle.dumps(value)).decode()
 
-    def get_internal_type(self): 
+    def get_internal_type(self):
         return 'TextField'

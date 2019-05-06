@@ -32,7 +32,7 @@ class ContactFormSubmissionAttachmentAdmin(admin.TabularInline):
     extra = 0
 
 class ContactFormSubmissionAdmin(admin.ModelAdmin):
-    list_display = ('__unicode__', 'submitted_at', 'language', 'sender_ip',)
+    list_display = ('__str__', 'submitted_at', 'language', 'sender_ip',)
     list_filter = ('form', 'language', 'submitted_at')
     search_fields = ('form_data',)
     date_hierarchy = 'submitted_at'

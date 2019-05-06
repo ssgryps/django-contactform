@@ -28,13 +28,13 @@ def _site_contact_email():
     else:
         site_contact_email = 'n/a'
     return site_contact_email
-site_contact_email = lazy(_site_contact_email,unicode)
+site_contact_email = lazy(_site_contact_email,str)
 
 
 def _make_helper(layout_fields):
     from uni_form.helpers import Layout, Fieldset, FormHelper
     helper = FormHelper()
-    helper.add_layout(Layout(*[str(field) if isinstance(field, basestring) else field for field in layout_fields]))
+    helper.add_layout(Layout(*[str(field) if isinstance(field, str) else field for field in layout_fields]))
     return helper
 
 
@@ -43,10 +43,10 @@ class ContactForm(models.Model):
     name = models.CharField(_('name'), max_length=255)
     title = models.CharField(_('title'), max_length=255, null=True, blank=True)
     description = models.TextField(_('description'), blank=True)
-    submit_label = models.CharField(_('submit label'), max_length=30, blank=True, help_text=u'%s: "%s"' % (_('default'), _('submit')))
+    submit_label = models.CharField(_('submit label'), max_length=30, blank=True, help_text='%s: "%s"' % (_('default'), _('submit')))
     success_message = models.TextField(_('success message'), blank=True)
     recipients = models.ManyToManyField('Recipient', verbose_name=_('recipients'))
-    cc_managers = models.BooleanField(_('CC to managers'), default=False, help_text=_('Check to send a copy to the site managers (%s).' % (u','.join([manager[1] for manager in settings.MANAGERS]))))
+    cc_managers = models.BooleanField(_('CC to managers'), default=False, help_text=_('Check to send a copy to the site managers (%s).' % (','.join([manager[1] for manager in settings.MANAGERS]))))
     cc_site_contact = models.BooleanField(_('CC to site contact'), default=False, help_text=_('Check to send a copy to the site contact (%s).' % (site_contact_email)))
     has_captcha = models.BooleanField(_("has a captcha"), default=False, help_text=_("Should the user be required to fill up a captcha to verify he is human?"))
     css_class = models.CharField(_('CSS class'), null=True, blank=True, max_length=255 )
@@ -63,8 +63,8 @@ class ContactForm(models.Model):
     )
     
     
-    def __unicode__(self):
-        return u'%s (%s)' % (self.name, self.language)
+    def __str__(self):
+        return '%s (%s)' % (self.name, self.language)
 
     def get_form_base_class(self):
         from .forms import ContactFormFormBase
@@ -122,13 +122,13 @@ class ContactForm(models.Model):
                 # ..., initial=field.initial, help_text=field.help_text)
             elif issubclass(field_class, FileField):
                 form_field = field_class(required=field.required, widget=widget,
-                                         label=u'%s (%s %s)' % (label, _('max.'), filesizeformat(MAX_FILE_SIZE)),
+                                         label='%s (%s %s)' % (label, _('max.'), filesizeformat(MAX_FILE_SIZE)),
                                          initial=field.initial)
                 # ..., initial=field.initial, help_text=field.help_text)
             elif field_class is TitlePseudoField:
                 if "uni_form" in settings.INSTALLED_APPS:
                     from uni_form.helpers import HTML
-                    layout.append(HTML(u"<h3>%s</h3>" % label))
+                    layout.append(HTML("<h3>%s</h3>" % label))
                 continue
             else:
                 form_field = field_class(required=field.required, widget=widget,
@@ -170,8 +170,8 @@ class FormField(models.Model):
     css_class = models.CharField(_('CSS class'), null=True, blank=True, max_length=255 )
     position = models.IntegerField(_('position'), default=1)
     
-    def __unicode__(self):
-        return u'%s, %s field %s' % (self.label, self.field_type, self.widget)
+    def __str__(self):
+        return '%s, %s field %s' % (self.label, self.field_type, self.widget)
     
     class Meta:
         ordering = ('position',)
@@ -183,8 +183,8 @@ class Recipient(models.Model):
     name = models.CharField(_('name'), max_length=100, blank=True)
     email = models.EmailField(_('email'))
     
-    def __unicode__(self):
-        return u'%s, %s' % (self.name, self.email)
+    def __str__(self):
+        return '%s, %s' % (self.name, self.email)
     
     class Meta:
         verbose_name = _('recipient')
@@ -199,8 +199,8 @@ class ContactFormSubmission(models.Model):
     form_data = models.TextField(_('form data'), null=True, blank=True)
     form_data_pickle = PickledObjectField(_('form data pickle'), null=True, blank=True, editable=False)
     
-    def __unicode__(self):
-        return u'%s' % (self.form)
+    def __str__(self):
+        return '%s' % (self.form)
     
     class Meta:
         ordering = ("-submitted_at",)
@@ -229,8 +229,8 @@ if 'cms' in settings.INSTALLED_APPS:
     class ContactFormIntermediate(CMSPlugin):
         form = models.ForeignKey(ContactForm, verbose_name=_('form'))
         
-        def __unicode__(self):
-            return u'%s (%s)' % (self.form.name, self.form.language)
+        def __str__(self):
+            return '%s (%s)' % (self.form.name, self.form.language)
             
     if 'reversion' in settings.INSTALLED_APPS:
         import reversion
