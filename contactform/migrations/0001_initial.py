@@ -38,8 +38,8 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='ContactFormIntermediate',
             fields=[
-                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin')),
-                ('form', models.ForeignKey(verbose_name='form', to='contactform.ContactForm')),
+                ('cmsplugin_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='cms.CMSPlugin', on_delete=models.CASCADE)),
+                ('form', models.ForeignKey(verbose_name='form', to='contactform.ContactForm', on_delete=models.CASCADE)),
             ],
             options={
                 'abstract': False,
@@ -56,7 +56,7 @@ class Migration(migrations.Migration):
                 ('language', models.CharField(default=b'unknown', max_length=255, verbose_name='language')),
                 ('form_data', models.TextField(null=True, verbose_name='form data', blank=True)),
                 ('form_data_pickle', contactform.fields.PickledObjectField(verbose_name='form data pickle', null=True, editable=False, blank=True)),
-                ('form', models.ForeignKey(to='contactform.ContactForm')),
+                ('form', models.ForeignKey(to='contactform.ContactForm', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('-submitted_at',),
@@ -70,7 +70,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('file', models.FileField(upload_to=b'private/contactform/submissions/%Y-%m-%d', max_length=200, verbose_name='file')),
-                ('submission', models.ForeignKey(related_name='attachments', verbose_name='submission', to='contactform.ContactFormSubmission')),
+                ('submission', models.ForeignKey(related_name='attachments', verbose_name='submission', to='contactform.ContactFormSubmission', on_delete=models.CASCADE)),
             ],
             options={
                 'verbose_name': 'contact form submission attachment',
@@ -90,7 +90,7 @@ class Migration(migrations.Migration):
                 ('choices', models.TextField(help_text='enter choices divided by a semicolon (;) for ChoiceFields', null=True, verbose_name='choices', blank=True)),
                 ('css_class', models.CharField(max_length=255, null=True, verbose_name='CSS class', blank=True)),
                 ('position', models.IntegerField(default=1, verbose_name='position')),
-                ('form', models.ForeignKey(related_name='field_set', to='contactform.ContactForm')),
+                ('form', models.ForeignKey(related_name='field_set', to='contactform.ContactForm', on_delete=models.CASCADE)),
             ],
             options={
                 'ordering': ('position',),
@@ -119,7 +119,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='contactform',
             name='success_page',
-            field=models.ForeignKey(blank=True, to='cms.Page', null=True),
+            field=models.ForeignKey(blank=True, to='cms.Page', null=True, on_delete=models.CASCADE),
             preserve_default=True,
         ),
     ]
