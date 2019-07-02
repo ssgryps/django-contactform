@@ -4,7 +4,7 @@
 <p><a href="{{ form_url }}">{{ contact_form.name }}</a></p>
 -------------
 <table>
-    {% for attrs in cleaned_fields.itervalues %}
+    {% for attrs in cleaned_fields.values %}
         <tr>
           <td>{{ attrs.label }}</td>
           <td>{{ attrs.value }}</td>

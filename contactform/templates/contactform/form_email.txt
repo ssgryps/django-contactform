@@ -5,6 +5,6 @@
 -------------
 {{ form_url }}
 
-{% for attrs in cleaned_fields.itervalues %}
+{% for attrs in cleaned_fields.values %}
 {{ attrs.label }}: {{ attrs.value }}
 {% endfor %}
