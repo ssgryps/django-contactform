@@ -4,6 +4,8 @@ from django.contrib import admin
 
 from contactform.models import ContactForm, Recipient, FormField, ContactFormSubmission,\
     ContactFormSubmissionAttachment
+from contactform.csv_export_views import export
+from django.urls import path
 
 class FormFieldInline(admin.TabularInline):
     model = FormField
@@ -40,20 +42,9 @@ class ContactFormSubmissionAdmin(admin.ModelAdmin):
         ContactFormSubmissionAttachmentAdmin,
     ]
     def get_urls(self):
-        if django.VERSION < (1, 8):
-            try:
-                from django.conf.urls.defaults import patterns, url
-            except:
-                from django.conf.urls import patterns, url
-            urlpatterns = patterns('',
-                (r'^csv/$', 'contactform.csv_export_views.export'),
-            )
-        else:
-            from django.conf.urls import url
-            from contactform.csv_export_views import export
-            urlpatterns = [
-                url(r'^csv/$', export),
-            ]
+        urlpatterns = [
+            path('csv/', export),
+        ]
         return urlpatterns + super(ContactFormSubmissionAdmin, self).get_urls()
 
 admin.site.register(ContactForm, ContactFormAdmin)

@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.forms.widgets import HiddenInput
 from django.template.defaultfilters import filesizeformat, slugify
-from django.utils.translation import ugettext_lazy as _
 from django.utils.encoding import smart_str
 from django.utils.html import strip_tags
 from django.utils.functional import lazy
@@ -16,6 +15,7 @@ from contactform.field_loader import WIDGET_TYPES, FIELD_TYPES, load_class, Titl
 from contactform import south_introspections
 
 from cms.models import Page
+from django.utils.translation import gettext_lazy as _
 
 
 def _site_contact_email():

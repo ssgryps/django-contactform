@@ -1,23 +1,12 @@
 # -*- coding: utf-8 -*-
 import base64
+import pickle
 
 import django
 from django.db import models
-from django.utils import six
-
-try:
-    import cPickle as pickle
-except ImportError:
-    import pickle
 
 
-if django.VERSION < (1, 8):
-    PickledObjectFieldBase = six.with_metaclass(models.SubfieldBase, models.Field)
-else:
-    PickledObjectFieldBase = models.Field
-
-
-class PickledObjectField(PickledObjectFieldBase):
+class PickledObjectField(models.Field):
     """
     this version of pickled object does not work for pickling a single string. it must be some object, dict, list...
     """

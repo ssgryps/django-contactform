@@ -1,10 +1,10 @@
-from django.utils.translation import ugettext_lazy as _
 
 from cms import __version__ as cms_version
 from cms.plugin_pool import plugin_pool
 from cms.plugin_base import CMSPluginBase
 
 from contactform.models import ContactFormIntermediate
+from django.utils.translation import gettext_lazy as _
 
 
 class ContactFormPlugin(CMSPluginBase):

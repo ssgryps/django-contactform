@@ -5,7 +5,6 @@ from django.core.mail import EmailMultiAlternatives as EmailMessage, get_connect
 from django.forms import BooleanField, EmailField, Form, ValidationError
 from django.template.defaultfilters import slugify, yesno
 from django.template.loader import render_to_string
-from django.utils.translation import ugettext_lazy as _
 
 try:
     from captcha.fields import CaptchaField
@@ -21,6 +20,7 @@ except ImportError:
 
 from .models import ContactFormSubmission, ContactFormSubmissionAttachment
 from .settings import MAX_FILE_SIZE
+from django.utils.translation import gettext_lazy as _
 
 
 def id_compare(x):
